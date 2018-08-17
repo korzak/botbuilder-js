@@ -8,5 +8,11 @@
     "rules": {},
     "rulesDirectory": [
         "node_modules/tslint-microsoft-contrib"
-    ]
+    ],
+    "linterOptions": {
+        "exclude": [
+            "./libraries/botframework-connector/src/generated/**/*.ts",
+            "./libraries/botframework-schema/src/**/*.ts"
+        ]
+    }
 }
