@@ -18,17 +18,17 @@ export class AzureBotService extends ConnectedService implements IAzureBotServic
     }
 
     public toJSON(): IAzureBotService {
-        let { id, name, tenantId, subscriptionId, resourceGroup } = this;
+        const { id, name, tenantId, subscriptionId, resourceGroup } = this;
         return { type: ServiceTypes.AzureBotService, id, name, tenantId, subscriptionId, resourceGroup };
     }
 
     // encrypt keys in service
-    public encrypt(secret:string, iv?:string): void{
+    public encrypt(secret: string, iv?: string): void {
 
     }
 
     // decrypt keys in service
-    public decrypt(secret:string, iv?:string): void{
+    public decrypt(secret: string, iv?: string): void {
 
     }
 }

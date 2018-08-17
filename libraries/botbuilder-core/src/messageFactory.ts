@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { CardFactory } from './cardFactory';
 import {
-    ActivityTypes, AttachmentLayoutTypes, Activity, CardAction,
-    SuggestedActions, Attachment, InputHints
+    Activity, ActivityTypes, Attachment, AttachmentLayoutTypes,
+    CardAction, InputHints, SuggestedActions
 } from 'botframework-schema';
+import { CardFactory } from './cardFactory';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
@@ -45,7 +45,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             text: text,
@@ -70,7 +70,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             inputHint: inputHint || InputHints.AcceptingInput,
@@ -105,7 +105,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
 
@@ -128,7 +128,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
 
@@ -152,7 +152,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
 
@@ -174,13 +174,12 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) { a.name = name; }
         return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
 }
-
 
 /**
  * @private

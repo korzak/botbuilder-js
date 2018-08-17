@@ -30,7 +30,6 @@ import { Storage, StoreItem, StoreItems } from './storage';
 export class MemoryStorage  implements Storage {
     protected etag: number;
 
-
     /**
      * Creates a new MemoryStorage instance.
      * @param memory (Optional) memory to use for storing items. By default it will create an empty JSON object `{}`.
@@ -55,7 +54,7 @@ export class MemoryStorage  implements Storage {
     public write(changes: StoreItems): Promise<void> {
         const that = this;
         function saveItem(key: string, item: StoreItem) {
-            const clone = Object.assign({}, item);
+            const clone = {...item};
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
         }

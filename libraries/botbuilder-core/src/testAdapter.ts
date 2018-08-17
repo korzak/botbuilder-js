@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import assert = require('assert');
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { TurnContext } from './turnContext';
-import { ActivityTypes, Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
-import assert = require('assert');
 
 /**
  * Signature for a function that can be used to inspect individual activities returned by a bot
@@ -95,13 +95,13 @@ export class TestAdapter extends BotAdapter {
     constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
         super();
         this.sendTraceActivities = sendTraceActivities || false;
-        this.template = Object.assign({
+        this.template = {...{
             channelId: 'test',
             serviceUrl: 'https://test.com',
             from: { id: 'user', name: 'User1' },
             recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' },
-        } as Partial<Activity>, template);
+            conversation: { id: 'Convo1' }
+        } as Partial<Activity>,       ...template};
     }
 
     /**
@@ -163,7 +163,7 @@ export class TestAdapter extends BotAdapter {
      */
     public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
         // Initialize request
-        const request = Object.assign({}, this.template, typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity);
+        const request = {...this.template, ...(typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity)};
         if (!request.type) { request.type = ActivityTypes.Message; }
         if (!request.id) { request.id = (this.nextId++).toString(); }
 
@@ -219,7 +219,7 @@ export class TestAdapter extends BotAdapter {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public testActivities(activities: Array<Partial<Activity>>, description?: string, timeout?: number): TestFlow {
+    public testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow {
         if (!activities) {
             throw new Error('Missing array of activities');
         }
@@ -230,11 +230,11 @@ export class TestAdapter extends BotAdapter {
 
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
         return activities.reduce((flow, activity) => {
-            let assertDescription = 'reply' + (description ? ' from ' + description : '');
+            const assertDescription = 'reply' + (description ? ' from ' + description : '');
             return this.isReply(activity)
                 ? flow.assertReply(activityInspector(activity), assertDescription, timeout)
                 : flow.send(activity);
-        }, new TestFlow(Promise.resolve(), this));
+        },                       new TestFlow(Promise.resolve(), this));
     }
 
     /**
@@ -330,11 +330,11 @@ export class TestFlow {
         return new TestFlow(this.previous.then(() => {
             return new Promise<void>((resolve, reject) => {
                 if (!timeout) { timeout = 3000; }
-                let start = new Date().getTime();
+                const start = new Date().getTime();
                 const adapter = this.adapter;
 
                 function waitForActivity() {
-                    let current = new Date().getTime();
+                    const current = new Date().getTime();
                     if ((current - start) > <number>timeout) {
                         // Operation timed out
                         let expecting: string;
@@ -348,7 +348,6 @@ export class TestFlow {
                                 break;
                             case 'function':
                                 expecting = expected.toString();
-                                break;
                         }
                         reject(new Error(`TestAdapter.assertReply(${expecting}): ${description} Timed out after ${current - start}ms.`));
                     } else if (adapter.activityBuffer.length > 0) {
@@ -357,12 +356,12 @@ export class TestFlow {
                         inspector(reply, description as string);
                         resolve();
                     } else {
-                        setTimeout(() => waitForActivity(), 5);
+                        setTimeout(waitForActivity, 5);
                     }
                 }
                 waitForActivity();
             });
-        }), this.adapter);
+        }),                 this.adapter);
     }
 
     /**
@@ -379,7 +378,7 @@ export class TestFlow {
                 }
             }
             assert.fail(`TestAdapter.assertReplyOneOf(): ${description || ''} FAILED, Expected one of :${JSON.stringify(candidates)}`);
-        }, description, timeout);
+        },                      description, timeout);
     }
 
     /**
@@ -388,8 +387,8 @@ export class TestFlow {
      */
     public delay(ms: number): TestFlow {
         return new TestFlow(this.previous.then(() => {
-            return new Promise<void>((resolve, reject) => { setTimeout(() => resolve(), ms); });
-        }), this.adapter);
+            return new Promise<void>((resolve, reject) => { setTimeout(resolve, ms); });
+        }),                 this.adapter);
     }
 
     /**

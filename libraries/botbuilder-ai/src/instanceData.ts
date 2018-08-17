@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
 */
 
-/** 
- * Strongly typed information corresponding to a LUIS `$instance` value. 
+/**
+ * Strongly typed information corresponding to a LUIS `$instance` value.
  */
 export interface InstanceData {
     /** 0-based index in the analyzed text for where entity starts. */

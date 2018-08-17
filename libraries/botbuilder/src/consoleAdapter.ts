@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, ResourceResponse, ConversationReference, BotAdapter, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, ConversationReference, ResourceResponse, TurnContext } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**
@@ -35,13 +35,13 @@ export class ConsoleAdapter extends BotAdapter {
      */
     constructor(reference?: ConversationReference) {
         super();
-        this.reference = Object.assign({
+        this.reference = {...{
             channelId: 'console',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
             conversation:  { id: 'convo1', name: '', isGroup: false },
             serviceUrl: ''
-        } as ConversationReference, reference);
+        } as ConversationReference,    ...reference};
     }
 
     /**
@@ -81,12 +81,12 @@ export class ConsoleAdapter extends BotAdapter {
                 id: (this.nextId++).toString(),
                 timestamp: new Date(),
                 text: line
-            }, this.reference, true);
+            },                                                      this.reference, true);
 
             // Create context and run middleware pipe
             const context = new TurnContext(this, activity);
             this.runMiddleware(context, logic)
-                .catch((err) => { this.printError(err.toString()) });
+                .catch((err) => { this.printError(err.toString()); });
         });
         return function close() {
             rl.close();
@@ -141,7 +141,7 @@ export class ConsoleAdapter extends BotAdapter {
             function next(i: number) {
                 if (i < activities.length) {
                     responses.push(<ResourceResponse>{});
-                    let a = activities[i];
+                    const a = activities[i];
                     switch (a.type) {
                         case <ActivityTypes>'delay':
                             setTimeout(() => next(i + 1), a.value);
@@ -158,7 +158,6 @@ export class ConsoleAdapter extends BotAdapter {
                         default:
                             that.print(`[${a.type}]`);
                             next(i + 1);
-                            break;
                     }
                 } else {
                     resolve(responses);

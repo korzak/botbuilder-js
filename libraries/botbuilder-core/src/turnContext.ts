@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ResourceResponse, ConversationReference, ActivityTypes, InputHints } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 
@@ -65,40 +65,6 @@ export interface TurnContext { }
  * ```
  */
 export class TurnContext {
-    private _adapter: BotAdapter|undefined =  undefined;
-    private _activity: Activity| undefined = undefined;
-    private _respondedRef: { responded: boolean; } = { responded: false };
-    private _turnState = new Map<any, any>();
-    private _onSendActivities: SendActivitiesHandler[] = [];
-    private _onUpdateActivity: UpdateActivityHandler[] = [];
-    private _onDeleteActivity: DeleteActivityHandler[] = [];
-
-    /**
-     * Creates a new TurnContext instance.
-     * @param adapterOrContext Adapter that constructed the context or a context object to clone.
-     * @param request Request being processed.
-     */
-    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
-    constructor(adapterOrContext: TurnContext);
-    constructor(adapterOrContext: BotAdapter|TurnContext, request?: Partial<Activity>) {
-        if (adapterOrContext instanceof TurnContext) {
-            adapterOrContext.copyTo(this);
-        } else {
-            this._adapter = adapterOrContext;
-            this._activity = request as Activity;
-        }
-    }
-
-    /**
-     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
-     * instance. Can be overridden in derived classes.
-     * @param context The context object to copy private members to. Everything should be copied by reference.
-     */
-    protected copyTo(context: TurnContext): void {
-        // Copy private member to other instance.
-        ['_adapter', '_activity', '_respondedRef', '_services', 
-         '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);
-    }
 
     /**
      * The adapter for this context.
@@ -176,6 +142,85 @@ export class TurnContext {
     public get turnState(): Map<any, any> {
         return this._turnState;
     }
+    private _adapter: BotAdapter|undefined =  undefined;
+    private _activity: Activity| undefined = undefined;
+    private _respondedRef: { responded: boolean; } = { responded: false };
+    private _turnState = new Map<any, any>();
+    private _onSendActivities: SendActivitiesHandler[] = [];
+    private _onUpdateActivity: UpdateActivityHandler[] = [];
+    private _onDeleteActivity: DeleteActivityHandler[] = [];
+
+    /**
+     * Creates a new TurnContext instance.
+     * @param adapterOrContext Adapter that constructed the context or a context object to clone.
+     * @param request Request being processed.
+     */
+    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
+    constructor(adapterOrContext: TurnContext);
+    constructor(adapterOrContext: BotAdapter|TurnContext, request?: Partial<Activity>) {
+        if (adapterOrContext instanceof TurnContext) {
+            adapterOrContext.copyTo(this);
+        } else {
+            this._adapter = adapterOrContext;
+            this._activity = request as Activity;
+        }
+    }
+
+    /**
+     * Returns the conversation reference for an activity.
+     *
+     * @remarks
+     * This can be saved as a plain old JSON object and then later used to message the user
+     * proactively.
+     *
+     * ```JavaScript
+     * const reference = TurnContext.getConversationReference(context.request);
+     * ```
+     * @param activity The activity to copy the conversation reference from
+     */
+    public static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
+        return {
+            activityId: activity.id,
+            user: shallowCopy(activity.from),
+            bot: shallowCopy(activity.recipient),
+            conversation: shallowCopy(activity.conversation),
+            channelId: activity.channelId,
+            serviceUrl: activity.serviceUrl
+        };
+    }
+
+    /**
+     * Updates an activity with the delivery information from a conversation reference.
+     *
+     * @remarks
+     * Calling this after [getConversationReference()](#getconversationreference) on an incoming
+     * activity will properly address the reply to a received activity.
+     *
+     * ```JavaScript
+     * // Send a typing indicator without going through an middleware listeners.
+     * const reference = TurnContext.getConversationReference(context.request);
+     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
+     * await context.adapter.sendActivities([activity]);
+     * ```
+     * @param activity Activity to copy delivery information to.
+     * @param reference Conversation reference containing delivery information.
+     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
+     */
+    public static applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>, isIncoming = false): Partial<Activity> {
+        activity.channelId = reference.channelId;
+        activity.serviceUrl = reference.serviceUrl;
+        activity.conversation = reference.conversation;
+        if (isIncoming) {
+            activity.from = reference.user;
+            activity.recipient = reference.bot;
+            if (reference.activityId) { activity.id = reference.activityId; }
+        } else {
+            activity.from = reference.bot;
+            activity.recipient = reference.user;
+            if (reference.activityId) { activity.replyToId = reference.activityId; }
+        }
+        return activity;
+    }
 
     /**
      * Sends a single activity or message to the user.
@@ -195,7 +240,7 @@ export class TurnContext {
         let a: Partial<Activity>;
         if (typeof activityOrText === 'string') {
             a = { text: activityOrText, inputHint: inputHint || InputHints.AcceptingInput };
-            if (speak) { a.speak = speak }
+            if (speak) { a.speak = speak; }
         } else {
             a = activityOrText;
         }
@@ -224,16 +269,16 @@ export class TurnContext {
         let sentNonTraceActivity = false;
         const ref = TurnContext.getConversationReference(this.activity);
         const output = activities.map((a) => {
-            const o = TurnContext.applyConversationReference(Object.assign({}, a), ref);
-            if (!o.type) { o.type = ActivityTypes.Message }
-            if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true }
+            const o = TurnContext.applyConversationReference({...a}, ref);
+            if (!o.type) { o.type = ActivityTypes.Message; }
+            if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true; }
             return o;
         });
         return this.emit(this._onSendActivities, output, () => {
             return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                     // Set responded flag
-                    if (sentNonTraceActivity) { this.responded = true }
+                    if (sentNonTraceActivity) { this.responded = true; }
                     return responses;
                 });
         });
@@ -243,7 +288,7 @@ export class TurnContext {
      * Replaces an existing activity.
      *
      * @remarks
-     * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers 
+     * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers
      * before being passed to `adapter.updateActivity()`.
      *
      * ```JavaScript
@@ -253,7 +298,7 @@ export class TurnContext {
      *    await context.updateActivity(update);
      * }
      * ```
-     * @param activity New replacement activity. The activity should already have it's ID information populated. 
+     * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
         return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
@@ -352,6 +397,17 @@ export class TurnContext {
         return this;
     }
 
+    /**
+     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
+     * instance. Can be overridden in derived classes.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    protected copyTo(context: TurnContext): void {
+        // Copy private member to other instance.
+        ['_adapter', '_activity', '_respondedRef', '_services',
+         '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);
+    }
+
     private emit<T>(handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
         const list = handlers.slice();
         const context = this;
@@ -367,62 +423,5 @@ export class TurnContext {
         }
         return emitNext(0);
     }
-
-    /**
-     * Returns the conversation reference for an activity.
-     *
-     * @remarks
-     * This can be saved as a plain old JSON object and then later used to message the user
-     * proactively.
-     *
-     * ```JavaScript
-     * const reference = TurnContext.getConversationReference(context.request);
-     * ```
-     * @param activity The activity to copy the conversation reference from
-     */
-    static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
-        return {
-            activityId: activity.id,
-            user: shallowCopy(activity.from),
-            bot: shallowCopy(activity.recipient),
-            conversation: shallowCopy(activity.conversation),
-            channelId: activity.channelId,
-            serviceUrl: activity.serviceUrl
-        };
-    }
-
-    /**
-     * Updates an activity with the delivery information from a conversation reference.
-     *
-     * @remarks
-     * Calling this after [getConversationReference()](#getconversationreference) on an incoming
-     * activity will properly address the reply to a received activity.
-     *
-     * ```JavaScript
-     * // Send a typing indicator without going through an middleware listeners.
-     * const reference = TurnContext.getConversationReference(context.request);
-     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * await context.adapter.sendActivities([activity]);
-     * ```
-     * @param activity Activity to copy delivery information to.
-     * @param reference Conversation reference containing delivery information.
-     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
-     */
-    static applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>, isIncoming = false): Partial<Activity> {
-        activity.channelId = reference.channelId;
-        activity.serviceUrl = reference.serviceUrl;
-        activity.conversation = reference.conversation;
-        if (isIncoming) {
-            activity.from = reference.user;
-            activity.recipient = reference.bot;
-            if (reference.activityId) { activity.id = reference.activityId; }
-        } else {
-            activity.from = reference.bot;
-            activity.recipient = reference.user;
-            if (reference.activityId) { activity.replyToId = reference.activityId; }
-        }
-        return activity;
-    }
 }
-
-
+

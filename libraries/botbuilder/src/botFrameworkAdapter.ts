@@ -5,14 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 import {
-    BotAdapter, TurnContext, ActivityTypes, Activity, ConversationReference,
-    ResourceResponse, ConversationParameters, ConversationAccount,
-    TokenResponse, ConversationsResult, ChannelAccount
+    Activity, ActivityTypes, BotAdapter, ChannelAccount, ConversationAccount,
+    ConversationParameters, ConversationReference, ConversationsResult,
+    ResourceResponse, TokenResponse, TurnContext
 } from 'botbuilder-core';
+import { ConnectorClient, JwtTokenValidation, MicrosoftAppCredentials, OAuthApiClient, SimpleCredentialProvider } from 'botframework-connector';
 import * as os from 'os';
-
 
 /**
  * Express or Restify Request object.
@@ -72,7 +71,6 @@ const USER_AGENT = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' 
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
-
 /**
  * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
@@ -100,7 +98,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
-        this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
+        this.settings = { appId: '', appPassword: '', ...settings};
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
@@ -329,7 +327,6 @@ export class BotFrameworkAdapter extends BotAdapter {
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
-
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
@@ -393,7 +390,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         return parseRequest(req).then((request) => {
             // Authenticate the incoming request
             errorCode = 401;
-            const authHeader = req.headers['authorization'] || '';
+            const authHeader = req.headers.authorization || '';
             return this.authenticateRequest(request, authHeader).then(() => {
                 // Process received activity
                 errorCode = 500;
@@ -455,7 +452,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 setTimeout(() => {
                                     responses.push({} as ResourceResponse);
                                     next(i + 1);
-                                }, typeof activity.value === 'number' ? activity.value : 1000);
+                                },         typeof activity.value === 'number' ? activity.value : 1000);
                                 break;
                             case 'invokeResponse':
                                 // Cache response to context object. This will be retrieved when turn completes.
@@ -486,8 +483,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 p.then((response) => {
                                     responses.push(response);
                                     next(i + 1);
-                                }, (err) => reject(err));
-                                break;
+                                },     reject);
                         }
                     } catch (err) {
                         reject(err);

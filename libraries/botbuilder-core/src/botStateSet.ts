@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
-import { Middleware } from './middlewareSet';
 import { BotState } from './botState';
+import { Middleware } from './middlewareSet';
 import { StoreItem } from './storage';
+import { TurnContext } from './turnContext';
 
 /**
  * Middleware that will call `read()` and `write()` in parallel on multiple `BotState`
@@ -52,7 +52,7 @@ export class BotStateSet implements Middleware {
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.readAll(context, true)
-            .then(() => next())
+            .then(next)
             .then(() => this.writeAll(context));
     }
 

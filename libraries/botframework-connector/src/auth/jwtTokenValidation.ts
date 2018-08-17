@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Activity } from 'botframework-schema';
+import { ChannelValidation } from './channelValidation';
+import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
-import { ChannelValidation } from './channelValidation';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
-import { ClaimsIdentity } from './claimsIdentity';
 
 export module JwtTokenValidation {
 
@@ -23,7 +23,7 @@ export module JwtTokenValidation {
      */
     export async function authenticateRequest(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
-            let isAuthDisabled = await credentials.isAuthenticationDisabled();
+            const isAuthDisabled = await credentials.isAuthenticationDisabled();
 
             if (isAuthDisabled) {
                 return new ClaimsIdentity([], true);
@@ -32,7 +32,7 @@ export module JwtTokenValidation {
             throw new Error('Unauthorized Access. Request is not authorized');
         }
 
-        let claimsIdentity = await this.validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
+        const claimsIdentity = await this.validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
 
         MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
 
@@ -40,18 +40,18 @@ export module JwtTokenValidation {
     }
 
     export async function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl: string = ''): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) throw new Error('\'authHeader\' required.');
+        if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
 
-        let usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
+        const usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);//, channelId)
+            return EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId); //, channelId)
         }
-        
+
         if (serviceUrl.trim()) {
-            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId)//, channelId)
+            return ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId); //, channelId)
         }
-        
-        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId)//, channelId)
+
+        return ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId); //, channelId)
     }
 }

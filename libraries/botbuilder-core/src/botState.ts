@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
+import { BotStatePropertyAccessor, StatePropertyAccessor } from './botStatePropertyAccessor';
 import { Middleware } from './middlewareSet';
-import { Storage, StoreItems, calculateChangeHash, StorageKeyFactory } from './storage';
-import { StatePropertyAccessor, BotStatePropertyAccessor } from './botStatePropertyAccessor';
+import { calculateChangeHash, Storage, StorageKeyFactory, StoreItems } from './storage';
+import { TurnContext } from './turnContext';
 
 /**
  * State information cached off the context object by a `BotState` instance.
@@ -74,7 +74,7 @@ export class BotState implements Middleware {
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.read(context, true)
-            .then(() => next())
+            .then(next)
             .then(() => this.write(context));
     }
 

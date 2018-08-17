@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, RecognizerResult } from 'botbuilder';
-import { LuisResult, IntentModel, EntityModel, CompositeEntityModel } from '../generated/lib/models';
+import { RecognizerResult, TurnContext } from 'botbuilder';
 import { LuisClient } from '../generated';
+import { CompositeEntityModel, EntityModel, IntentModel, LuisResult } from '../generated/lib/models';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -24,7 +24,7 @@ interface LuisOptions {
  * @private
  */
 interface LuisModel {
-    ModelID: string,
+    ModelID: string;
 }
 
 /**
@@ -98,19 +98,39 @@ export class LuisRecognizer {
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         this.application = application;
-        this.options = Object.assign({
+        this.options = {
             includeAllIntents: false,
             includeInstanceData: true,
             log: true,
             spellCheck: false,
-            staging: false
-        }, options);
+            staging: false,                           ...options};
         this.includeApiResults = !!includeApiResults;
 
         // Create client and override callbacks
         // TODO: Update this to the official SDK once available
-        var baseUri = "https://" + (this.application.azureRegion || 'westus') + ".api.cognitive.microsoft.com";
+        const baseUri = 'https://' + (this.application.azureRegion || 'westus') + '.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(baseUri);
+    }
+
+    /**
+     * Returns the name of the top scoring intent from a set of LUIS results.
+     * @param results Result set to be searched.
+     * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
+     * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
+     */
+    public static topIntent(results: RecognizerResult | undefined, defaultIntent = 'None', minScore = 0.0): string {
+        let topIntent: string | undefined;
+        let topScore = -1;
+        if (results && results.intents) {
+            for (const name in results.intents) {
+                const score = results.intents[name].score;
+                if (typeof score === 'number' && score > topScore && score >= minScore) {
+                    topIntent = name;
+                    topScore = score;
+                }
+            }
+        }
+        return topIntent || defaultIntent;
     }
 
     /**
@@ -131,7 +151,7 @@ export class LuisRecognizer {
                     timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
                     log: this.options.log,
-                    customHeaders: { "Ocp-Apim-Subscription-Key": this.application.endpointKey}
+                    customHeaders: { 'Ocp-Apim-Subscription-Key': this.application.endpointKey}
                 }
             )
                 .then((luisResult: LuisResult) => {
@@ -142,7 +162,7 @@ export class LuisRecognizer {
                         intents: this.getIntents(luisResult),
                         entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.options.includeInstanceData === undefined || this.options.includeInstanceData),
                         sentiment: this.getSentiment(luisResult),
-                        luisResult: this.includeApiResults ? luisResult : null,
+                        luisResult: this.includeApiResults ? luisResult : null
                     };
 
                     // Write to cache
@@ -156,27 +176,6 @@ export class LuisRecognizer {
         return Promise.resolve(cached);
     }
 
-    /**
-     * Returns the name of the top scoring intent from a set of LUIS results.
-     * @param results Result set to be searched.
-     * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
-     * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.  
-     */
-    static topIntent(results: RecognizerResult | undefined, defaultIntent = 'None', minScore = 0.0): string {
-        let topIntent: string | undefined = undefined;
-        let topScore = -1;
-        if (results && results.intents) {
-            for (const name in results.intents) {
-                const score = results.intents[name].score;
-                if (typeof score === 'number' && score > topScore && score >= minScore) {
-                    topIntent = name;
-                    topScore = score;
-                }
-            }
-        }
-        return topIntent || defaultIntent;
-    }
-
     private emitTraceInfo(context: TurnContext, luisResult: LuisResult, recognizerResult: RecognizerResult): Promise<any> {
         const traceInfo: LuisTraceInfo = {
             recognizerResult: recognizerResult,
@@ -187,7 +186,7 @@ export class LuisRecognizer {
             luisModel: {
                 ModelID: this.application.applicationId
             }
-        }
+        };
         return context.sendActivity({
             type: 'trace',
             valueType: LUIS_TRACE_TYPE,
@@ -207,7 +206,7 @@ export class LuisRecognizer {
             luisResult.intents.reduce((prev: any, curr: IntentModel) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
-            }, intents);
+            },                        intents);
         } else {
             const topScoringIntent = luisResult.topScoringIntent;
             intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
@@ -216,7 +215,7 @@ export class LuisRecognizer {
     }
 
     private getEntitiesAndMetadata(entities: EntityModel[], compositeEntities: CompositeEntityModel[] | undefined, verbose: boolean): any {
-        let entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
+        const entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
         // We start by populating composite entities so that entities covered by them are removed from the entities list
@@ -252,36 +251,35 @@ export class LuisRecognizer {
                 return entity.resolution;
             }
 
-            var vals = entity.resolution.values;
-            var type = vals[0].type;
-            var timexes = vals.map(t => t.timex);
-            var distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
+            const vals = entity.resolution.values;
+            const type = vals[0].type;
+            const timexes = vals.map(t => t.timex);
+            const distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
             return { type: type, timex: distinct };
-        }
-        else {
-            var res = entity.resolution;
+        } else {
+            const res = entity.resolution;
             switch (entity.type) {
-                case "builtin.number":
-                case "builtin.ordinal": return Number(res.value);
-                case "builtin.percentage":
+                case 'builtin.number':
+                case 'builtin.ordinal': return Number(res.value);
+                case 'builtin.percentage':
                     {
-                        var svalue = res.value;
-                        if (svalue.endsWith("%")) {
+                        let svalue = res.value;
+                        if (svalue.endsWith('%')) {
                             svalue = svalue.substring(0, svalue.length - 1);
                         }
                         return Number(svalue);
                     }
-                case "builtin.age":
-                case "builtin.dimension":
-                case "builtin.currency":
-                case "builtin.temperature":
+                case 'builtin.age':
+                case 'builtin.dimension':
+                case 'builtin.currency':
+                case 'builtin.temperature':
                     {
-                        var val = res.value;
-                        var obj = {};
+                        const val = res.value;
+                        const obj = {};
                         if (val) {
-                            obj["number"] = Number(val);
+                            obj['number'] = Number(val);
                         }
-                        obj["units"] = res.unit;
+                        obj['units'] = res.unit;
                         return obj;
                     }
                 default:
@@ -295,58 +293,58 @@ export class LuisRecognizer {
     }
 
     private getEntityMetadata(entity: EntityModel): any {
-        var res = {
+        const res = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
             score: entity.score,
             text: entity.entity,
-            type: entity.type,
+            type: entity.type
         };
         if (entity.resolution && entity.resolution.subtype) {
-            res["subtype"] = entity.resolution.subtype;
+            res['subtype'] = entity.resolution.subtype;
         }
         return res;
     }
 
     private getNormalizedEntityName(entity: EntityModel): string {
         // Type::Role -> Role
-        var type = entity.type.split(':').pop();
-        if (type.startsWith("builtin.datetimeV2.")) {
-            type = "datetime";
+        let type = entity.type.split(':').pop();
+        if (type.startsWith('builtin.datetimeV2.')) {
+            type = 'datetime';
         }
-        if (type.startsWith("builtin.currency")) {
-            type = "money";
+        if (type.startsWith('builtin.currency')) {
+            type = 'money';
         }
         if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
-        if (entity.role != null && entity.role != "") {
+        if (entity.role != null && entity.role != '') {
             type = entity.role;
         }
-        return type.replace(/\.|\s/g, "_");
+        return type.replace(/\.|\s/g, '_');
     }
 
     private populateCompositeEntity(compositeEntity: CompositeEntityModel, entities: EntityModel[], entitiesAndMetadata: any, verbose: boolean): EntityModel[] {
-        let childrenEntites: any = verbose ? { $instance: {} } : {};
+        const childrenEntites: any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        let compositeEntityMetadata: EntityModel | undefined = entities.find(entity => {
-            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text 
+        const compositeEntityMetadata: EntityModel | undefined = entities.find(entity => {
+            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
-            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value
+            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
         });
 
-        let filteredEntities: EntityModel[] = [];
+        const filteredEntities: EntityModel[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
         }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
-        let coveredSet = new Set();
+        const coveredSet = new Set();
         compositeEntity.children.forEach(childEntity => {
             for (let i = 0; i < entities.length; i++) {
-                let entity = entities[i];
+                const entity = entities[i];
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
                     compositeEntityMetadata &&
@@ -357,16 +355,18 @@ export class LuisRecognizer {
                     coveredSet.add(i);
                     this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
 
-                    if (verbose)
+                    if (verbose) {
                         this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                    }
                 }
-            };
+            }
         });
 
         // filter entities that were covered by this composite entity
         for (let i = 0; i < entities.length; i++) {
-            if (!coveredSet.has(i))
+            if (!coveredSet.has(i)) {
                 filteredEntities.push(entities[i]);
+            }
         }
 
         this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
@@ -384,18 +384,19 @@ export class LuisRecognizer {
      * @param value Property Value
      */
     private addProperty(obj: any, key: string, value: any) {
-        if (key in obj)
+        if (key in obj) {
             obj[key] = obj[key].concat(value);
-        else
+        } else {
             obj[key] = [value];
+        }
     }
 
     private getSentiment(luis: LuisResult) {
-        var result;
+        let result;
         if (luis.sentimentAnalysis) {
             result = {
-                "label": luis.sentimentAnalysis.label,
-                "score": luis.sentimentAnalysis.score
+                label: luis.sentimentAnalysis.label,
+                score: luis.sentimentAnalysis.score
             };
         }
         return result;

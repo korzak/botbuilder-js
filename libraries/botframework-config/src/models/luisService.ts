@@ -27,20 +27,24 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     // encrypt keys in service
     public encrypt(secret: string, iv?: string): void {
-        if (this.authoringKey && this.authoringKey.length > 0)
+        if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = encryptString(this.authoringKey, secret, iv);
+        }
 
-        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+        if (this.subscriptionKey && this.subscriptionKey.length > 0) {
             this.subscriptionKey = encryptString(this.subscriptionKey, secret, iv);
+        }
     }
 
     // decrypt keys in service
     public decrypt(secret: string, iv?: string): void {
-        if (this.authoringKey && this.authoringKey.length > 0)
+        if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = decryptString(this.authoringKey, secret, iv);
+        }
 
-        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+        if (this.subscriptionKey && this.subscriptionKey.length > 0) {
             this.subscriptionKey = decryptString(this.subscriptionKey, secret, iv);
+        }
     }
 
 }

@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
 import { BotState } from './botState';
+import { TurnContext } from './turnContext';
 
 /** NEW */
 export interface StatePropertyAccessor<T = any> {
@@ -40,4 +40,4 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
         obj[this.name] = value;
     }
 }
-
+

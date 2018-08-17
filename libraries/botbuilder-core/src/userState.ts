@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
 import { BotState } from './botState';
 import { Storage } from './storage';
+import { TurnContext } from './turnContext';
 
 const NO_KEY = `UserState: channelId and/or conversation missing from context.request.`;
 

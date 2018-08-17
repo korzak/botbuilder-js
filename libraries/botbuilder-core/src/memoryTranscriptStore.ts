@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
 import { Activity } from 'botframework-schema';
+import { PagedResult, Transcript, TranscriptStore } from './transcriptLogger';
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
@@ -17,28 +17,28 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
     private static readonly pageSize: number = 20;
 
-    private channels: Map<string, Map<string, Array<Activity>>> = new Map<string, Map<string, Array<Activity>>>();
+    private channels: Map<string, Map<string, Activity[]>> = new Map<string, Map<string, Activity[]>>();
 
     /**
      * Log an activity to the transcript.
      * @param activity Activity to log.
      */
-    logActivity(activity: Activity): void | Promise<void> {
+    public logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
 
         // get channel
-        let channel: Map<string, Array<Activity>>;
+        let channel: Map<string, Activity[]>;
         if (!this.channels.has(activity.channelId)) {
-            channel = new Map<string, Array<Activity>>();
+            channel = new Map<string, Activity[]>();
             this.channels.set(activity.channelId, channel);
         } else {
             channel = this.channels.get(activity.channelId);
         }
 
         // get conversation transcript
-        let transcript: Array<Activity>;
+        let transcript: Activity[];
         if (!channel.has(activity.conversation.id)) {
             transcript = [];
             channel.set(activity.conversation.id, transcript);
@@ -58,16 +58,16 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
+    public getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let pagedResult = new PagedResult<Activity>();
+        const pagedResult = new PagedResult<Activity>();
         if (this.channels.has(channelId)) {
-            let channel = this.channels.get(channelId);
+            const channel = this.channels.get(channelId);
             if (channel.has(conversationId)) {
-                let transcript = channel.get(conversationId);
+                const transcript = channel.get(conversationId);
                 if (continuationToken) {
                     pagedResult.items = transcript
                         .sort(timestampSorter)
@@ -95,12 +95,12 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult = new PagedResult<Transcript>();
+        const pagedResult = new PagedResult<Transcript>();
         if (this.channels.has(channelId)) {
-            let channel = this.channels.get(channelId);
+            const channel = this.channels.get(channelId);
 
             if (continuationToken) {
                 pagedResult.items = Array.from(channel.entries()).map(kv => ({
@@ -132,13 +132,13 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
         if (this.channels.has(channelId)) {
-            let channel = this.channels.get(channelId);
+            const channel = this.channels.get(channelId);
             if (channel.has(conversationId)) {
                 channel.delete(conversationId);
             }

@@ -8,9 +8,9 @@
 import { TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
 
-/** 
+/**
  * Tracking information for a dialog on the stack.
- * @param T (Optional) type of state being persisted for dialog. 
+ * @param T (Optional) type of state being persisted for dialog.
  */
 export interface DialogInstance<T = any> {
     /** ID of the dialog this instance is for. */
@@ -57,34 +57,33 @@ export interface DialogTurnResult<T = any> {
     result?: T;
 }
 
-
 /**
  * Base class for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> {
     /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
-    static EndOfTurn: DialogTurnResult = { hasActive: true, hasResult: false };
-
-    constructor(dialogId: string) { 
-        this.id = dialogId;
-    }
+    public static EndOfTurn: DialogTurnResult = { hasActive: true, hasResult: false };
 
     public readonly id: string;
+
+    constructor(dialogId: string) {
+        this.id = dialogId;
+    }
 
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.
-     * @param options (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.  
+     * @param options (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
     public abstract dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
     /**
-     * (Optional) method called when an instance of the dialog is the active dialog and the user 
-     * replies with a new activity. The dialog will generally continue to receive the users replies 
+     * (Optional) method called when an instance of the dialog is the active dialog and the user
+     * replies with a new activity. The dialog will generally continue to receive the users replies
      * until it calls `DialogContext.end()`, `DialogContext.begin()`, or `DialogContext.prompt()`.
-     * 
+     *
      * If this method is NOT implemented then the dialog will be automatically ended when the user
-     * replies. 
+     * replies.
      * @param dc The dialog context for the current turn of conversation.
      */
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
@@ -94,15 +93,15 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
-     * dialog that was started by the current instance using `DialogContext.begin()` or 
+     * dialog that was started by the current instance using `DialogContext.begin()` or
      * `DialogContext.prompt()`.
-     * 
+     *
      * If this method is NOT implemented then the dialog will be automatically ended with a call
-     * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the 
-     * active dialogs parent. 
+     * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the
+     * active dialogs parent.
      * @param dc The dialog context for the current turn of conversation.
      * @param reason The reason the dialog is being resumed. This will typically be a value of `DialogReason.endCalled`.
-     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called. 
+     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
     public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.

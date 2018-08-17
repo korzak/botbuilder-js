@@ -104,7 +104,7 @@ export interface StoreItems {
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy = Object.assign({}, item);
+    const cpy = {...item};
     if (cpy.eTag) { delete cpy.eTag; }
     return JSON.stringify(cpy);
 }

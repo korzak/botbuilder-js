@@ -18,7 +18,7 @@ export class FileService extends ConnectedService implements IFileService {
 
     public toJSON(): IFileService {
         const { name = '', id = '', filePath = '' } = this;
-        return { type: ServiceTypes.File, id: filePath, name, filePath, };
+        return { type: ServiceTypes.File, id: filePath, name, filePath };
     }
 
     // encrypt keys in service

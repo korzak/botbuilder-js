@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MiddlewareSet, MiddlewareHandler, Middleware } from './middlewareSet';
-import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
-import { TurnContext } from './turnContext';
+import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
+import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
+import { TurnContext } from './turnContext';
 
 /**
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot

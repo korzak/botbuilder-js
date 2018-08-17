@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import * as path from 'path';
-import * as fs from 'async-file';
+import * as fs from 'async-file';
+import { Activity, PagedResult, Transcript, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
-import { Activity, TranscriptStore, PagedResult, Transcript } from 'botbuilder-core';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
@@ -37,13 +37,13 @@ export class FileTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    logActivity(activity: Activity): void | Promise<void> {
+    public logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
 
-        let conversationFolder = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
-        let activityFileName = this.getActivityFilename(activity);
+        const conversationFolder = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
+        const activityFileName = this.getActivityFilename(activity);
         return this.saveActivity(activity, conversationFolder, activityFileName);
     }
 
@@ -54,13 +54,13 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
+    public getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let pagedResult = new PagedResult<Activity>();
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
+        const pagedResult = new PagedResult<Activity>();
+        const transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
         return fs.exists(transcriptFolder).then(exists => {
             if (!exists) { return pagedResult; }
 
@@ -83,7 +83,7 @@ export class FileTranscriptStore implements TranscriptStore {
                     fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
                 .then(reads => Promise.all(reads))
                 .then(jsons => {
-                    let items = jsons.map(parseActivity);
+                    const items = jsons.map(parseActivity);
                     pagedResult.items = items;
                     if (pagedResult.items.length === FileTranscriptStore.PageSize) {
                         pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
@@ -99,11 +99,11 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult = new PagedResult<Transcript>();
-        let channelFolder = this.getChannelFolder(channelId);
+        const pagedResult = new PagedResult<Transcript>();
+        const channelFolder = this.getChannelFolder(channelId);
         return fs.exists(channelFolder).then(exists => {
             if (!exists) { return pagedResult; }
             return fs.readdir(channelFolder)
@@ -137,18 +137,18 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
+        const transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
         return new Promise((resolve) =>
-            rimraf(transcriptFolder, () => resolve()));
+            rimraf(transcriptFolder, resolve));
     }
 
     private saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
-        let json = JSON.stringify(activity, null, '\t');
+        const json = JSON.stringify(activity, null, '\t');
         return this.ensureFolder(transcriptPath).then(() => {
             return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
         });
@@ -194,7 +194,7 @@ const ticksPerMillisecond = 10000;
  * @param timestamp
  */
 const getTicks = (timestamp: Date): string => {
-    let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+    const ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
     return ticks.toString(16);
 };
 
@@ -203,7 +203,7 @@ const getTicks = (timestamp: Date): string => {
  * @param ticks
  */
 const readDate = (ticks) => {
-    let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+    const t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
     return new Date(t);
 };
 
@@ -214,7 +214,7 @@ const readDate = (ticks) => {
 const withDateFilter = (date: Date) => {
     if (!date) { return () => true; }
     return (filename) => {
-        let ticks = filename.split('-')[0];
+        const ticks = filename.split('-')[0];
         return readDate(ticks) >= date;
     };
 };
@@ -227,7 +227,7 @@ const withContinuationToken = (continuationToken: string) => {
     if (!continuationToken) { return () => true; }
 
     return skipWhileExpression(fileName => {
-        let id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+        const id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
         return id !== continuationToken;
     });
 };
@@ -252,7 +252,7 @@ const skipWhileExpression = (expression) => {
  * @param json
  */
 const parseActivity = (json: string): Activity => {
-    let activity: Activity = JSON.parse(json);
+    const activity: Activity = JSON.parse(json);
     activity.timestamp = new Date(activity.timestamp);
     return activity;
 };

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { Storage, StoreItems, StoreItem } from 'botbuilder';
-import { escape } from 'querystring';
 import * as azure from 'azure-storage';
+import { Storage, StoreItem, StoreItems } from 'botbuilder';
+import { escape } from 'querystring';
 
 /** A host address. */
 export interface Host {
@@ -19,8 +19,8 @@ export interface Host {
     secondaryHost: string;
 }
 
-/** 
- * Settings for configuring an instance of `BlobStorage`. 
+/**
+ * Settings for configuring an instance of `BlobStorage`.
  */
 export interface BlobStorageSettings {
     /** Root container name to use. */
@@ -64,27 +64,24 @@ const ResolvePromisesSerial = (values, promise) => values.map(value => () => pro
  */
 const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
 
-
 /**
  * @private
  * Internal dictionary with the containers where entities will be stored.
  */
 const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
-
-
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
- * 
+ *
  * @remarks
- * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity 
- * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob 
+ * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
+ * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
  * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
-    private settings: BlobStorageSettings
-    private client: BlobServiceAsync
-    private useEmulator: boolean
+    private settings: BlobStorageSettings;
+    private client: BlobServiceAsync;
+    private useEmulator: boolean;
 
     /**
      * Creates a new BlobStorage instance.
@@ -103,32 +100,32 @@ export class BlobStorage implements Storage {
             throw new Error('Invalid container name.');
         }
 
-        this.settings = Object.assign({}, settings)
+        this.settings = {...settings};
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
         this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
     }
 
-    read(keys: string[]): Promise<StoreItems> {
+    public read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new Error('Please provide at least one key to read from storage.');
         }
 
-        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
+        const sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return new Promise<StoreItems>((resolve, reject) => {
                 Promise.all<DocumentStoreItem>(sanitizedKeys.map((key) => {
                     return new Promise((resolve, reject) => {
                         this.client.getBlobMetadataAsync(container.name, key).then((blobMetadata) => {
                             this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then((result) => {
-                                let document: DocumentStoreItem = JSON.parse(result as any);
+                                const document: DocumentStoreItem = JSON.parse(result as any);
                                 document.document.eTag = blobMetadata.etag;
                                 resolve(document);
-                            }, err => resolve(null));
-                        }, (err) => resolve(null));
+                            },                                                                             err => resolve(null));
+                        },                                                         (err) => resolve(null));
                     });
                 })).then((items) => {
                     if (items !== null && items.length > 0) {
-                        let storeItems: StoreItems = {};
+                        const storeItems: StoreItems = {};
                         items.filter(x => x).forEach((item) => {
                             storeItems[item.realId] = item.document;
                         });
@@ -139,21 +136,21 @@ export class BlobStorage implements Storage {
         });
     }
 
-    write(changes: StoreItems): Promise<void> {
+    public write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
         }
 
         return this.ensureContainerExists().then((container) => {
-            let blobs = Object.keys(changes).map((key) => {
-                let documentChange: DocumentStoreItem = {
+            const blobs = Object.keys(changes).map((key) => {
+                const documentChange: DocumentStoreItem = {
                     id: this.sanitizeKey(key),
                     realId: key,
                     document: changes[key]
                 };
 
-                let payload = JSON.stringify(documentChange);
-                let options: azure.BlobService.CreateBlobRequestOptions = {
+                const payload = JSON.stringify(documentChange);
+                const options: azure.BlobService.CreateBlobRequestOptions = {
                     accessConditions: changes[key].eTag === '*' ? azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
                     parallelOperationThreadCount: 4
                 };
@@ -168,24 +165,24 @@ export class BlobStorage implements Storage {
             // A block blob can be uploaded using a single PUT operation or divided into multiple PUT block operations
             // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
             // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
-            let promise = (blob) => this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
+            const promise = (blob) => this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
 
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb
             // that crash with a deadlock when performing parallel uploads.
             // This behavior does not occur when using an Azure Blob Storage account.
-            let results = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
+            const results = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
 
             return results.then(() => { }); //void
         });
     }
 
-    delete(keys: string[]): Promise<void> {
+    public delete(keys: string[]): Promise<void> {
         if (!keys) {
             throw new Error('Please provide at least one key to delete from storage.');
         }
 
-        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
+        const sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return Promise.all(sanitizedKeys.map(key => {
                 return this.client.deleteBlobIfExistsAsync(container.name, key);
@@ -202,10 +199,10 @@ export class BlobStorage implements Storage {
             throw new Error('Please provide a not empty key.');
         }
 
-        let segments = key.split('/').filter(x => x);
-        let base = segments.splice(0, 1)[0];
+        const segments = key.split('/').filter(x => x);
+        const base = segments.splice(0, 1)[0];
         // The number of path segments comprising the blob name cannot exceed 254
-        let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
+        const validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
         // Reserved URL characters must be escaped.
         return escape(validKey).substr(0, 1024);
     }
@@ -215,7 +212,7 @@ export class BlobStorage implements Storage {
     }
 
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
-        let key = this.settings.containerName;
+        const key = this.settings.containerName;
         if (!checkedCollections[key]) {
             checkedCollections[key] = this.client.createContainerIfNotExistsAsync(key);
         }
@@ -233,7 +230,7 @@ export class BlobStorage implements Storage {
         return {
             createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
             deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
-            
+
             createBlockBlobFromTextAsync : this.denodeify(blobService, blobService.createBlockBlobFromText),
             getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
             getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
