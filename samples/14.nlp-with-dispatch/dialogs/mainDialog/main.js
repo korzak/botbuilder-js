@@ -1,17 +1,20 @@
 const mainState = require('./mainState');
 
+const WEATHER_DIALOG = 'weatherDialog';
+const QNA_DIALOG = 'qnaDialog';
+const homeAutomationDialog = require('../homeAutomation/home-automation');
+const weatherDialog = require('../weather/weather');
+const QnADialog = require('../qnaDialog/qna');
+const { DialogSet } = require('botbuilder-dialogs');
 class MainDialog {
-    constructor (conversationState) {
-        this.state = new mainState(conversationState);
+    constructor (convoState, userState) {
+        this.state = new mainState(convoState);
+        this.homeAutomationDialog = new homeAutomationDialog(convoState, userState);
     }
     async onTurn(context) {
         if (context.activity.type === 'message') {
-            // read from state.
-            let count = await this.state.get(context);
-            count = count === undefined ? 0 : count;
-            await context.sendActivity(`${count}: You said "${context.activity.text}"`);
-            // increment and set turn counter.
-            this.state.set(context, ++count);
+            // hand this over to home automation dialog
+            await this.homeAutomationDialog.onTurn(context);
         }
         else {
             await context.sendActivity(`[${context.activity.type} event detected]`);

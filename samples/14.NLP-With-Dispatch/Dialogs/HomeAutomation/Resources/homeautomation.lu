@@ -1,49 +1,45 @@
 
 > # Intent definitions
 
-## Turn Off Device
-- {Device=fish pond} {Operation=off} please
-- {Room=living room} lamps off please
+## HomeAutomation
+- {Device=fish pond} off please
+- {Room=living room} {Device=lamps} off please
 - lock the {Device=doors} for me please
-- make {Device=camera} 1 off please
-- set {Device=lights} out {Room=bedroom}
+- make {Device=camera 1} off please
+- set {Device=lights} out in {Room=bedroom}
 - shut down my work {Device=computer}
-- silence the {Device=phone}
-- turn {Device=dimmer} {Operation=off}
-- turn {Operation=off} {Device=ac} please
-- turn {Operation=off} {Room=foyer} {Device=lights}
+- turn {Device=dimmer} off
+- turn off {Device=ac} please
+- turn off {Room=foyer} {Device=lights}
 - turn off {Room=living room} {Device=light}
-- turn {Operation=off} {Device=staircase}
-- turn {Operation=off} venice {Device=lamp}
-
-
-## Turn On Device
-- {Room=breezeway} {Operation=on} please
-- change {Operation=temperature} to seventy two degrees
-- {Device=coffee bar} {Operation=on} please
-- fish pond on please
+- turn off {Device=staircase}
+- turn off venice {Device=lamp}
+- {Room=breezeway} on please
+- change {deviceProperty=temperature} to seventy two degrees
+- {Device=coffee bar} on please
+- {Device=fish pond} on please
 - {Device=illuminate} please
-- {Room=living room} {Device=lamp} {Operation=on} please
+- {Room=living room} {Device=lamp} on please
 - make some {Device=coffee}
 - play {Device=dvd}
-- set {Device=lights} {Operation=bright}
-- set {Device=lights} {Operation=concentrate}
-- snap switch {Device=fan} {Operation=fifty percent}
-- start {Room=master bedroom} {Device=light} .
-- {Room=theater} {Operation=on} please
-- turn {Operation=on} {Room=bathroom} {Device=heater}
-- turn {Operation=on} {Device=external speaker}
-- turn {Operation=on} my {Room=bedroom} {Device=lights} .
+- set {Device=lights} to {deviceProperty=bright}
+- set {Device=lights} to {deviceProperty=concentrate}
+- snap switch {Device=fan} fifty percent
+- start {Room=master bedroom} {Device=light}.
+- {Room=theater} on please
+- turn on {Room=bathroom} {Device=heater}
+- turn on {Device=external speaker}
+- turn on my {Room=bedroom} {Device=lights}.
 - turn on the {Room=furnace room} {Device=lights}
-- turn {Operation=on} {Device=thermostat} please
+- turn on {Device=thermostat} please
 - turn the {Device=fan} to high
-- turn {Device=thermostat} on 70 .
+- turn {Device=thermostat} on 70.
 
 
 ## None
-- decrease {Operation=temperature} for me please
+- decrease {deviceProperty=temperature} for me please
 - dim {Room=kitchen} {Device=lights} to 25 .
-- lower your {Operation=volume}
+- lower your {deviceProperty=volume}
 - turn on the internet in my {Room=bedroom} please
 
 
@@ -51,10 +47,30 @@
 
 $Device:simple
 
-$Operation:simple
+> Operation list entity
+$Operation:off=
+- off
+- turn off
+- switch off
+- lock
+- out
+- shut down
+- stop
+
+$Opeartion:on=
+- on
+- turn on
+- switch on
+- unlock
+- un lock
+- boot up
+- start 
 
 $Room:simple
 
+$PREBUILT:number
+
+$deviceProperty:simple
 
 > # Phrase list definitions
 
