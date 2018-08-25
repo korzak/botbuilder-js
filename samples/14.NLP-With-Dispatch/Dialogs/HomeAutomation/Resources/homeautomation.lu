@@ -34,6 +34,14 @@
 - turn on {Device=thermostat} please
 - turn the {Device=fan} to high
 - turn {Device=thermostat} on 70.
+> Add some patterns
+- turn on {Device}
+- turn on {Device} in {Room}
+- turn off {Device} in {Room}
+- {Device} on [please]
+- {Device} off [please]
+- {Device} in {Room} on [please]
+- {Device} in {Room} off [please]
 
 
 ## None
@@ -57,7 +65,7 @@ $Operation:off=
 - shut down
 - stop
 
-$Opeartion:on=
+$Operation:on=
 - on
 - turn on
 - switch on

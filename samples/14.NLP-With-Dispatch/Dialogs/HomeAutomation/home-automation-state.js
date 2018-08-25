@@ -32,35 +32,24 @@ class HomeAutomationState {
     }
     async setDevice(device, room, deviceState, deviceProperty, context) {
         // get devices from state.
-        let devices = await this.deviceProperty.get(context);
-        if(devices === undefined) { 
-            devices = new Array(new DeviceState(device, room, deviceProperty, deviceState));
+        let opetraions = await this.deviceProperty.get(context);
+        if(opetraions === undefined) { 
+            opetraions = new Array(new DeviceState(device, room, deviceProperty, deviceState));
         } else {
-            // see if we already have this device.
-            let existingDevice = devices.find(device => ((device.deviceName == device) || 
-                                                         (device.room == room) || 
-                                                         (device.deviceProperty == device.deviceProperty)
-                                                        ));
-            if(existingDevice === undefined) {
-                devices = devices.push(new DeviceState(device, room, deviceProperty, deviceState));
-            } else {
-                // update device properties
-                existingDevice.room = room === undefined?'':room;
-                existingDevice.deviceProperty = deviceProperty === undefined?'':deviceProperty;
-                existingDevice.deviceState = deviceState === undefined?'off':deviceState;
-            }
+            // add this operation
+            opetraions.push(new DeviceState(device, room, deviceProperty, deviceState));
         }
-        return this.deviceProperty.set(context,devices);
+        return this.deviceProperty.set(context,opetraions);
     }
     async getDevices(context) {
-        let returnText = 'No devices configured';
+        let returnText = 'No operations found';
         // read out of current devices from state
-        const devices = await this.deviceProperty.get(context);
-        if(devices === undefined) {
+        const opetraions = await this.deviceProperty.get(context);
+        if(opetraions === undefined) {
             return returnText;
         }
         returnText = '';
-        devices.forEach((device, idx) => {
+        opetraions.forEach((device, idx) => {
             returnText += '\n[' + idx + ']. ' + 
                           (device.deviceName?device.deviceName:'Unknown device') + 
                           (device.room?' in room = ' + device.room:'') + 

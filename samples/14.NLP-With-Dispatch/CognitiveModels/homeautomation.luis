@@ -37,13 +37,7 @@
             "shut down",
             "stop"
           ]
-        }
-      ],
-      "roles": []
-    },
-    {
-      "name": "Opeartion",
-      "subLists": [
+        },
         {
           "canonicalForm": "on",
           "list": [
@@ -521,7 +515,36 @@
       ]
     }
   ],
-  "patterns": [],
+  "patterns": [
+    {
+      "pattern": "turn on {Device}",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "turn on {Device} in {Room}",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "turn off {Device} in {Room}",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device} on [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device} off [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device} in {Room} on [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device} in {Room} off [please]",
+      "intent": "HomeAutomation"
+    }
+  ],
   "patternAnyEntities": [],
   "prebuiltEntities": [
     {
@@ -531,7 +554,7 @@
   ],
   "luis_schema_version": "3.0.0",
   "versionId": "0.1",
-  "name": "homeAutomation",
+  "name": "homeautomation",
   "desc": "",
   "culture": "en-us"
 }

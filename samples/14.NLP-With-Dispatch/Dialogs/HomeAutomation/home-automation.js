@@ -4,7 +4,7 @@ const NONE_INTENT = 'None';
 const DEVICE_PROPERTY_ENTITY = 'deviceProperty';
 const NUMBER_ENTITY = 'number';
 const ROOM_ENTITY = 'Room';
-const OPERATION_ENTITY = 'Opeartion';
+const OPERATION_ENTITY = 'Operation';
 const DEVICE_ENTITY = 'Device';
 
 const { LuisRecognizer } = require('botbuilder-ai');
@@ -57,7 +57,7 @@ class homeAutomation {
         // update device state.
         await this.state.setDevice(devices, rooms, operations, deviceProperties || numberProperties, context);
         await context.sendActivity(`You reached the "HomeAutomation" dialog.`);
-        await context.sendActivity(`Here's the current snapshot of your devices`);
+        await context.sendActivity(`Here's the current snapshot of your prior operations`);
         await context.sendActivity(await this.state.getDevices(context));
     }
 
