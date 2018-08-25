@@ -16,10 +16,10 @@ class DispatcherState {
 
         // property accessors for the different dialogs
         this.homeAutomationProperty = state.createProperty(HOME_AUTOMATION_PROPERTY);
-        this.weatherProperty = state.createProperty(WEATHER_PROPERTY);
-        this.qnaProperty = state.createProperty(QNA_PROPERTY);
+        //this.weatherProperty = state.createProperty(WEATHER_PROPERTY);
+        //this.qnaProperty = state.createProperty(QNA_PROPERTY);
         // dialog state
-        this.dialogState = state.createProperty(DIALOG_STATE_PROPERTY);
+        //this.dialogState = state.createProperty(DIALOG_STATE_PROPERTY);
     }
 
     // TODO: do we need getters and setters?

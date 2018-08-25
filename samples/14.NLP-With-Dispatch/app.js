@@ -4,7 +4,7 @@ const path = require('path');
 const env = require('dotenv').config({path: path.join(__dirname,'.env')});
 const restify = require('restify');
 
-const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbuilder');
+const { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
 const { BotConfiguration } = require('botframework-config');
 
 const MainDialog = require('./dialogs/mainDialog/main');
@@ -46,12 +46,13 @@ const memoryStorage = new MemoryStorage();
 
 // create conversation state with in-memory storage provider.
 const convoState = new ConversationState(memoryStorage);
-
+const userState = new UserState(memoryStorage);
 // add state middleware.
 adapter.use(convoState);
+adapter.use(userState);
 
 // Create main dialog.
-const mainDlg = new MainDialog(convoState);
+const mainDlg = new MainDialog(convoState, userState, botConfig);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {

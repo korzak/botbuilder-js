@@ -7,9 +7,9 @@ const weatherDialog = require('../weather/weather');
 const QnADialog = require('../qnaDialog/qna');
 const { DialogSet } = require('botbuilder-dialogs');
 class MainDialog {
-    constructor (convoState, userState) {
+    constructor (convoState, userState, botConfig) {
         this.state = new mainState(convoState);
-        this.homeAutomationDialog = new homeAutomationDialog(convoState, userState);
+        this.homeAutomationDialog = new homeAutomationDialog(convoState, userState, botConfig);
     }
     async onTurn(context) {
         if (context.activity.type === 'message') {

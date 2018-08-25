@@ -1,8 +1,5 @@
-const STATE_PROPERTY = "homeAutomation.State"
-const TURN_OFF_DIALOG = 'Turn Off Device';
-const TURN_ON_DIALOG = 'Turn On Device';
 const HOME_AUTOMATION_INTENT = 'HomeAutomation';
-const NONE = 'None';
+const NONE_INTENT = 'None';
 
 const DEVICE_PROPERTY_ENTITY = 'deviceProperty';
 const NUMBER_ENTITY = 'number';
@@ -10,7 +7,6 @@ const ROOM_ENTITY = 'Room';
 const OPERATION_ENTITY = 'Opeartion';
 const DEVICE_ENTITY = 'Device';
 
-const { DialogSet, DialogTurnResult } = require('botbuilder-dialogs');
 const { LuisRecognizer } = require('botbuilder-ai');
 const HomeAutomationState = require('./home-automation-state');
 // this is the LUIS service type entry in the .bot file.
@@ -42,32 +38,27 @@ class homeAutomation {
         // depending on intent, call turn on or turn off or return unknown
         switch(topHomeAutoIntent) {
             case HOME_AUTOMATION_INTENT: 
-                await this.handleDeviceUpdate(this.state, homeAutoResults);
+                await this.handleDeviceUpdate(homeAutoResults, context);
                 break;
-            case NONE:
+            case NONE_INTENT:
             default:
+                await context.sendActivity(`HomeAutomation dialog cannot fulfill this request. Bubbling up`);
                 // this dialog cannot handle this specific utterance. bubble up to parent
         }
         
     }
 
-    async handleDeviceUpdate(state, args) {
+    async handleDeviceUpdate(homeAutoResults, context) {
         const devices = findEntities(DEVICE_ENTITY, homeAutoResults.entities);
         const operations = findEntities(OPERATION_ENTITY, homeAutoResults.entities);
         const rooms = findEntities(ROOM_ENTITY, homeAutoResults.entities);
         const deviceProperties = findEntities(DEVICE_PROPERTY_ENTITY, homeAutoResults.entities);
         const numberProperties = findEntities(NUMBER_ENTITY, homeAutoResults.entities);
-
-        const state = convoState.get(dialogContext.context);
-        state.homeAutomationTurnOff = state.homeAutomationTurnOff ? state.homeAutomationTurnOff + 1 : 1;
-        await dialogContext.context.sendActivity(`${state.homeAutomationTurnOff}: You reached the "HomeAutomation_TurnOff" dialog.`);
-        if (devices) {
-            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Device" entities:\n${devices.join(', ')}`);
-        }
-        if (operations) {
-            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Operation" entities:\n${operations.join(', ')}`);
-        }
-        await dialogContext.end();
+        // update device state.
+        await this.state.setDevice(devices, rooms, operations, deviceProperties || numberProperties, context);
+        await context.sendActivity(`You reached the "HomeAutomation" dialog.`);
+        await context.sendActivity(`Here's the current snapshot of your devices`);
+        await context.sendActivity(await this.state.getDevices(context));
     }
 
     
