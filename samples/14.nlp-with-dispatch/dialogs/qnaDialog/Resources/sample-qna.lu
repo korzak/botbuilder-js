@@ -10,6 +10,9 @@
 ## ? What are you?
 - What?
 - What do you do?
+- Who are you?
+- What is your name?
+- What should I call you?
     ```markdown
     I am the LUIS-QnAMaker Dispatch bot! I show how easy it is to use multiple LUIS models and a QnAMaker model inside of a chatbot.
     ```

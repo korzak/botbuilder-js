@@ -8,6 +8,7 @@ const NONE_INTENT = 'None';
 
 // LUIS entity names. 
 const LOCATION_ENTITY = 'Location';
+const LOCATION_PATTERNANY_ENTITY = 'Location_PatternAny';
 
 // STATE
 const WeatherState = require('./weather-state');
@@ -48,14 +49,15 @@ class Weather {
         const weatherResults = await this.luisRecognizer.recognize(context);
         const topWeatherIntent = LuisRecognizer.topIntent(weatherResults);
         // get location entity if available.
-        const locationEntity = (LOCATION_ENTITY in weatherResults.entities)?weatherResults.entities[LOCATION_ENTITY] : undefined;
+        const locationEntity = (LOCATION_ENTITY in weatherResults.entities)?weatherResults.entities[LOCATION_ENTITY][0] : undefined;
+        const locationPatternAnyEntity = (LOCATION_PATTERNANY_ENTITY in weatherResults.entities)?weatherResults.entities[LOCATION_PATTERNANY_ENTITY][0]:undefined;
         // depending on intent, call turn on or turn off or return unknown
         switch(topWeatherIntent) {
             case GET_CONDITION_INTENT: 
-                await context.sendActivity(`You asked for current weather condition in City = ` + locationEntity);
+                await context.sendActivity(`You asked for current weather condition in Location = ` + (locationEntity || locationPatternAnyEntity));
                 break;
             case GET_FORECAST_INTENT: 
-                await context.sendActivity(`You asked for weather forecast in City = ` + locationEntity);
+                await context.sendActivity(`You asked for weather forecast in Location = ` + (locationEntity || locationPatternAnyEntity));
                 break;
             case NONE_INTENT:
             default:

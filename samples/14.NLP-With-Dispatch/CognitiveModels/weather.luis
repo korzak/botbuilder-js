@@ -241,13 +241,13 @@
       ]
     },
     {
-      "text": "what will the weather be tomorrow in accord new york ?",
+      "text": "what will the weather be tomorrow in new york ?",
       "intent": "Get Weather Forecast",
       "entities": [
         {
           "entity": "Location",
           "startPos": 37,
-          "endPos": 51
+          "endPos": 44
         }
       ]
     },
@@ -273,8 +273,39 @@
       "entities": []
     }
   ],
-  "patterns": [],
-  "patternAnyEntities": [],
+  "patterns": [
+    {
+      "pattern": "how's the weather in {Location_PatternAny}",
+      "intent": "Get Weather Condition"
+    },
+    {
+      "pattern": "weather in {Location_PatternAny}",
+      "intent": "Get Weather Condition"
+    },
+    {
+      "pattern": "current weather in {Location_PatternAny}",
+      "intent": "Get Weather Condition"
+    },
+    {
+      "pattern": "What's the forecast for {Location_PatternAny}",
+      "intent": "Get Weather Forecast"
+    },
+    {
+      "pattern": "show me the forecast for {Location_PatternAny}",
+      "intent": "Get Weather Forecast"
+    },
+    {
+      "pattern": "what's the forecast for next week in {Location_PatternAny}",
+      "intent": "Get Weather Forecast"
+    }
+  ],
+  "patternAnyEntities": [
+    {
+      "name": "Location_PatternAny",
+      "explicitList": [],
+      "roles": []
+    }
+  ],
   "prebuiltEntities": [],
   "luis_schema_version": "3.0.0",
   "versionId": "0.1",

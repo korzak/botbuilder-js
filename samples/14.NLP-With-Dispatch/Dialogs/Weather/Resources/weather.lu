@@ -18,7 +18,10 @@
 - what's the weather like in {Location=minneapolis}
 - what is the rain volume in {Location=sonoma county} ?
 - what to wear in march in {Location=california}
-
+> Add some patterns
+- how's the weather in {Location_PatternAny}
+- weather in {Location_PatternAny}
+- current weather in {Location_PatternAny}
 
 ## Get Weather Forecast
 - forecast in celcius
@@ -34,6 +37,10 @@
 - will it be raining in {Location=ranchi}
 - will it rain this weekend
 - will it snow today
+> Add some patterns
+- What's the forecast for {Location_PatternAny}
+- show me the forecast for {Location_PatternAny}
+- what's the forecast for next week in {Location_PatternAny}
 
 
 > # Entity definitions

@@ -2,7 +2,7 @@
   "name": "echobot-with-counter",
   "version": "1.0.0",
   "description": "Bot Builder v4 echo bot sample",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha tests/*.test.js",
     "start": "node app.js"
