@@ -10,11 +10,14 @@ class MainDialog {
     constructor (convoState, userState, botConfig) {
         this.state = new mainState(convoState);
         this.homeAutomationDialog = new homeAutomationDialog(convoState, userState, botConfig);
+        this.weatherDialog = new weatherDialog(convoState, userState, botConfig);
     }
     async onTurn(context) {
         if (context.activity.type === 'message') {
             // hand this over to home automation dialog
-            await this.homeAutomationDialog.onTurn(context);
+            // await this.homeAutomationDialog.onTurn(context);
+            // hand this over to weather dialog
+            await this.weatherDialog.onTurn(context);
         }
         else {
             await context.sendActivity(`[${context.activity.type} event detected]`);

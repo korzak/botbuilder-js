@@ -1,12 +1,12 @@
-const DEVICE_PROPERTY = 'homeAutomation.Device';
+const HOME_ATUOMATION_STATE_PROPERTY = 'homeAutomation.state';
 
 class DeviceState {
     /**
      * 
-     * @param {*} device 
-     * @param {*} room 
-     * @param {*} deviceProperty 
-     * @param {*} deviceState 
+     * @param {String} device 
+     * @param {String} room 
+     * @param {String} deviceProperty 
+     * @param {String} deviceState 
      */
     constructor(device, room, deviceProperty, deviceState) { 
         this.deviceName = device?device:'';
@@ -27,9 +27,17 @@ class HomeAutomationState {
         if(!userState || !userState.createProperty) throw('Invalid user state provided.');
 
         // device property accessor for home automation scenario.
-        this.deviceProperty = convoState.createProperty(DEVICE_PROPERTY);
+        this.deviceProperty = convoState.createProperty(HOME_ATUOMATION_STATE_PROPERTY);
         
     }
+    /**
+     * 
+     * @param {String} device 
+     * @param {String} room 
+     * @param {String} deviceState 
+     * @param {String} deviceProperty 
+     * @param {Object} context context object
+     */
     async setDevice(device, room, deviceState, deviceProperty, context) {
         // get devices from state.
         let opetraions = await this.deviceProperty.get(context);
@@ -41,6 +49,11 @@ class HomeAutomationState {
         }
         return this.deviceProperty.set(context,opetraions);
     }
+    /**
+     * 
+     * @param {Object} context context object
+     * @returns {String} text readout of state operations
+     */
     async getDevices(context) {
         let returnText = 'No operations found';
         // read out of current devices from state

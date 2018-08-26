@@ -30,7 +30,7 @@
 - what's the weather going to be like in {Location=hawaii} ?
 - what is the weather in {Location=redmond} ?
 - what is the weather today at 10 day {Location=durham} ?
-- what will the weather be tomorrow in {Location=accord new york} ?
+- what will the weather be tomorrow in {Location=new york} ?
 - will it be raining in {Location=ranchi}
 - will it rain this weekend
 - will it snow today

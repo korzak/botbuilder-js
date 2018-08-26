@@ -2,46 +2,47 @@
 > # Intent definitions
 
 ## HomeAutomation
+- {Room=breezeway} on please
+- change {deviceProperty=temperature} to seventy two degrees
+- {Device=coffee bar} on please
 - {Device=fish pond} off please
+- {Device=fish pond} on please
+- {Device=illuminate} please
+- {Room=living room} {Device=lamp} on please
 - {Room=living room} {Device=lamps} off please
 - lock the {Device=doors} for me please
 - make {Device=camera 1} off please
+- make some {Device=coffee}
+- play {Device=dvd}
 - set {Device=lights} out in {Room=bedroom}
+- set {Device=lights} to {deviceProperty=bright}
+- set {Device=lights} to {deviceProperty=concentrate}
 - shut down my work {Device=computer}
+- snap switch {Device=fan} fifty percent
+- start {Room=master bedroom} {Device=light}.
+- {Room=theater} on please
 - turn {Device=dimmer} off
 - turn off {Device=ac} please
 - turn off {Room=foyer} {Device=lights}
 - turn off {Room=living room} {Device=light}
 - turn off {Device=staircase}
 - turn off venice {Device=lamp}
-- {Room=breezeway} on please
-- change {deviceProperty=temperature} to seventy two degrees
-- {Device=coffee bar} on please
-- {Device=fish pond} on please
-- {Device=illuminate} please
-- {Room=living room} {Device=lamp} on please
-- make some {Device=coffee}
-- play {Device=dvd}
-- set {Device=lights} to {deviceProperty=bright}
-- set {Device=lights} to {deviceProperty=concentrate}
-- snap switch {Device=fan} fifty percent
-- start {Room=master bedroom} {Device=light}.
-- {Room=theater} on please
 - turn on {Room=bathroom} {Device=heater}
 - turn on {Device=external speaker}
+- turn on {Room=kitchen} {Device=faucet}
+- turn on {Device=light} in {Room=bedroom}
 - turn on my {Room=bedroom} {Device=lights}.
 - turn on the {Room=furnace room} {Device=lights}
 - turn on {Device=thermostat} please
 - turn the {Device=fan} to high
 - turn {Device=thermostat} on 70.
-> Add some patterns
+- {Device} in {Room} on [please]
 - turn on {Device}
 - turn on {Device} in {Room}
-- turn off {Device} in {Room}
+- {Device} in {Room} off [please]
 - {Device} on [please]
 - {Device} off [please]
-- {Device} in {Room} on [please]
-- {Device} in {Room} off [please]
+- turn off {Device} in {Room}
 
 
 ## None
@@ -55,7 +56,21 @@
 
 $Device:simple
 
-> Operation list entity
+$deviceProperty:simple
+
+$Room:simple
+
+
+> # PREBUILT Entity definitions
+
+$PREBUILT:number
+
+
+> # Phrase list definitions
+
+
+> # List entities
+
 $Operation:off=
 - off
 - turn off
@@ -72,16 +87,7 @@ $Operation:on=
 - unlock
 - un lock
 - boot up
-- start 
-
-$Room:simple
-
-$PREBUILT:number
-
-$deviceProperty:simple
-
-> # Phrase list definitions
+- start
 
 
-> # List entities
 

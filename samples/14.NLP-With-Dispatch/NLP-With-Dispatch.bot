@@ -16,7 +16,7 @@
             "type": "luis",
             "id": "42",
             "name": "homeautomation-LUIS",
-            "version": "0.5",
+            "version": "0.1",
             "appId": "fa51efea-83d7-44be-97ef-45e31511f6d9",
             "authoringKey": "c0XFIOeQ1vRqgIsyBF5k1w==!XhPhRUpdAGRh9uga4OQM023482jZkxNmqiyBeZ8h0nMFLf9LsGRY+ojgHwYhHuBB",
             "subscriptionKey": "",
