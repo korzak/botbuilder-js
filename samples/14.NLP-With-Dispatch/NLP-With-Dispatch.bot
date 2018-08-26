@@ -2,7 +2,7 @@
     "name": "nlp-with-dispatch",
     "description": "",
     "version": "2.0",
-    "secretKey": "1odXMuYBJcyumhVkTf/QMA==!DCxVbc1FsDZLVdo3hFXtqMGfftO1+fSoSvDAmZal/LzxfxtkziMmxA0xerT/CY1M",
+    "secretKey": "XUDzBZUO91TeJuFwPC9QeA==!097ybK6NEVJJ1FkQsFmy/KP2QQRP2kRNvHIinYcZ6a3w4ckp8HVBiRT/l/xMdtlq",
     "services": [
         {
             "type": "endpoint",
@@ -18,7 +18,7 @@
             "name": "homeautomation-LUIS",
             "version": "0.1",
             "appId": "fa51efea-83d7-44be-97ef-45e31511f6d9",
-            "authoringKey": "4Do/eaHEtXE9GcxCs7fPVg==!vw+zT/+BWTh8lEhM2aLmGRRRPWjk63qwo52twrV5CCHhbROOXjMsko8fyDyGcvNI",
+            "authoringKey": "yFFrnO0vrwANILbutAjGYg==!c+moQPI313XAqG/0J9NpgJl+NEYR1gTTRfifsI14zV9lg2Npn3cvZMF4ghtZnHTk",
             "subscriptionKey": "",
             "region": "westus"
         },
@@ -28,7 +28,7 @@
             "name": "weather-LUIS",
             "version": "0.1",
             "appId": "83cf79de-7357-4b40-b216-d68bd521d9f1",
-            "authoringKey": "MY810oBriiIrSUIm6PNH5Q==!6rbmR/noByrniuHIfQlxwFwNAc3EaI84JBf8T15+I8Pp4ZOAlDAMdhAccFllBfPf",
+            "authoringKey": "dVHVyNzgQCCsiI2CVq9CMA==!kfrHzDVOZ8VvX6nrdA3Tx7hoXY9ilRxa8wNpZkRKq8XBgck524n5a6PtYxH3xABP",
             "subscriptionKey": "",
             "region": "westus"
         },
@@ -37,8 +37,8 @@
             "id": "113",
             "name": "simple-qna-dispatch",
             "kbId": "2fc7c268-0f86-4dc3-8334-d6612df2aa55",
-            "subscriptionKey": "CwMnk+4KK2IrsYz97rTXFA==!hQl7wWMjEWuJg0JeSxPqSX83ZgTIRNqSa5UPDfU2xpC5ozotUoazwd/eW641Txy7",
-            "endpointKey": "14s9EKzTZNfDmdr6BMiqkQ==!GydzKqk8UVPRuEoiCJd7LP3FdPjyw2DIZX2V1bX4VEs5dFMPLPAt50zWk1wFqaff",
+            "subscriptionKey": "6GIhTSO3Udz7tRqghPtNTA==!q5M1Wt+4esIfG/hopibi8CPK/mXUMn9ZZk7Fr4ZRmViODLfwovf40jv3zS6wlPM+",
+            "endpointKey": "DYR8poLv2Z3a53ieFLTQMg==!F4q35k7qnOflYEb7DolEhYvn28le6KNyI1+Ae2QM3fFxZHv7JnmoFDPXmGc7AyQE",
             "hostname": "https://contosocafeqnab8.azurewebsites.net/qnamaker"
         },
         {
@@ -46,7 +46,7 @@
             "id": "215",
             "name": "nlp-with-dispatchDispatch",
             "appId": "3aba0a7f-0681-4864-ba48-466b715dedb8",
-            "authoringKey": "znzHI9mBhmuAITwQhaDqgg==!C3uqvcSMrvzG6SgyUFY8yjJ/LvuEhJncDArZFNMD1rzV9OTX0+tbUiw2HhrL1g6F",
+            "authoringKey": "Q0RF857yVyEbHtLPoSUk5g==!OsePojMI/bx0k8VTXsLBAVUDAiQuRYQlsUPvNLQpz9/TGj9Cj1MCzCWh5ysNY7/Q",
             "serviceIds": [
                 "42",
                 "25",
@@ -54,7 +54,7 @@
             ],
             "subscriptionKey": "",
             "version": "Dispatch",
-            "region": ""
+            "region": "westus"
         }
     ]
 }

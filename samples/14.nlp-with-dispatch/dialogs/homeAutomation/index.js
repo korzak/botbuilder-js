@@ -10,6 +10,8 @@ const NUMBER_ENTITY = 'number';
 const ROOM_ENTITY = 'Room';
 const OPERATION_ENTITY = 'Operation';
 const DEVICE_ENTITY = 'Device';
+const DEVICE_PATTERNANY_ENTITY = 'Device_PatternAny';
+const ROOM_PATTERNANY_ENTITY = 'Room_PatternAny';
 
 // STATE
 const HomeAutomationState = require('./home-automation-state');
@@ -58,7 +60,7 @@ class homeAutomation {
             case NONE_INTENT:
             default:
                 await context.sendActivity(`HomeAutomation dialog cannot fulfill this request. Bubbling up`);
-                // this dialog cannot handle this specific utterance. bubble up to parent
+                // TODO: this dialog cannot handle this specific utterance. bubble up to parent
         }
         
     }
@@ -69,18 +71,19 @@ class homeAutomation {
      */
     async handleDeviceUpdate(homeAutoResults, context) {
         const devices = findEntities(DEVICE_ENTITY, homeAutoResults.entities);
+        const devices_patternAny = findEntities(DEVICE_PATTERNANY_ENTITY, homeAutoResults.entities);
+        const rooms_patternAny = findEntities(ROOM_PATTERNANY_ENTITY, homeAutoResults.entities);
         const operations = findEntities(OPERATION_ENTITY, homeAutoResults.entities);
         const rooms = findEntities(ROOM_ENTITY, homeAutoResults.entities);
         const deviceProperties = findEntities(DEVICE_PROPERTY_ENTITY, homeAutoResults.entities);
         const numberProperties = findEntities(NUMBER_ENTITY, homeAutoResults.entities);
         // update device state.
-        await this.state.setDevice(devices, rooms, operations[0], deviceProperties || numberProperties, context);
+        await this.state.setDevice((devices || devices_patternAny), (rooms || rooms_patternAny), operations[0], (deviceProperties || numberProperties), context);
         await context.sendActivity(`You reached the "HomeAutomation" dialog.`);
         await context.sendActivity(`Here's the current snapshot of your prior operations`);
+        // read out operations list
         await context.sendActivity(await this.state.getDevices(context));
     }
-
-    
 };
 
 module.exports = homeAutomation;

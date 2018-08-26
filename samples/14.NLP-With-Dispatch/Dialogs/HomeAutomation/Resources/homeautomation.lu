@@ -36,13 +36,14 @@
 - turn on {Device=thermostat} please
 - turn the {Device=fan} to high
 - turn {Device=thermostat} on 70.
-- {Device} in {Room} on [please]
-- turn on {Device}
-- turn on {Device} in {Room}
-- {Device} in {Room} off [please]
-- {Device} on [please]
-- {Device} off [please]
-- turn off {Device} in {Room}
+> Add some patterns
+- {Device_PatternAny} in {Room_PatternAny} on [please]
+- turn on {Device_PatternAny}
+- turn on {Device_PatternAny} in {Room_PatternAny}
+- {Device_PatternAny} in {Room_PatternAny} off [please]
+- {Device_PatternAny} on [please]
+- {Device_PatternAny} off [please]
+- turn off {Device_PatternAny} in {Room_PatternAny}
 
 
 ## None

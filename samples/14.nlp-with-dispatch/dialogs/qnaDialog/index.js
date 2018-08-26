@@ -20,14 +20,19 @@ class QnADialog {
             host: qnaConfig.hostname
         });
     }
+    /**
+     * 
+     * @param {Object} context context object
+     */
     async onTurn(context) {
         // make call to Qna Maker to get results
         const qnaResult = await this.qnaRecognizer.generateAnswer(context.activity.text, QnA_TOP_N, QnA_CONFIDENCE_THRESHOLD);
         if(!qnaResult || qnaResult.length === 0 || !qnaResult[0].answer) {
             await context.sendActivity(`No answer found in QnA Maker KB. Bubbling up..`);
-            // no answer here. bubble up.
+            // TODO: no answer here. bubble up.
             return;
         }
+        // respond with qna result
         await context.sendActivity(qnaResult[0].answer);
     }
 };

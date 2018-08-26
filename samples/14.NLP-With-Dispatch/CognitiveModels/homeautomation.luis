@@ -1,8 +1,4 @@
 {
-  "name": "homeautomation.luis",
-  "versionId": "0.5",
-  "desc": "",
-  "culture": "en-us",
   "intents": [
     {
       "name": "HomeAutomation"
@@ -13,7 +9,7 @@
   ],
   "entities": [
     {
-      "name": "Device",
+      "name": "Room",
       "roles": []
     },
     {
@@ -21,10 +17,11 @@
       "roles": []
     },
     {
-      "name": "Room",
+      "name": "Device",
       "roles": []
     }
   ],
+  "composites": [],
   "closedLists": [
     {
       "name": "Operation",
@@ -57,56 +54,18 @@
       "roles": []
     }
   ],
-  "composites": [],
-  "patternAnyEntities": [],
   "regex_entities": [],
-  "prebuiltEntities": [
-    {
-      "name": "number",
-      "roles": []
-    }
-  ],
-  "regex_features": [],
   "model_features": [],
-  "patterns": [
-    {
-      "pattern": "{Device} in {Room} on [please]",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "turn on {Device}",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "turn on {Device} in {Room}",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "{Device} in {Room} off [please]",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "{Device} on [please]",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "{Device} off [please]",
-      "intent": "HomeAutomation"
-    },
-    {
-      "pattern": "turn off {Device} in {Room}",
-      "intent": "HomeAutomation"
-    }
-  ],
+  "regex_features": [],
   "utterances": [
     {
       "text": "breezeway on please",
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 0,
-          "endPos": 8,
-          "entity": "Room"
+          "endPos": 8
         }
       ]
     },
@@ -115,9 +74,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "deviceProperty",
           "startPos": 7,
-          "endPos": 17,
-          "entity": "deviceProperty"
+          "endPos": 17
         }
       ]
     },
@@ -126,36 +85,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 0,
-          "endPos": 9,
-          "entity": "Device"
-        }
-      ]
-    },
-    {
-      "text": "decrease temperature for me please",
-      "intent": "None",
-      "entities": [
-        {
-          "startPos": 9,
-          "endPos": 19,
-          "entity": "deviceProperty"
-        }
-      ]
-    },
-    {
-      "text": "dim kitchen lights to 25 .",
-      "intent": "None",
-      "entities": [
-        {
-          "startPos": 4,
-          "endPos": 10,
-          "entity": "Room"
-        },
-        {
-          "startPos": 12,
-          "endPos": 17,
-          "entity": "Device"
+          "endPos": 9
         }
       ]
     },
@@ -164,9 +96,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 0,
-          "endPos": 8,
-          "entity": "Device"
+          "endPos": 8
         }
       ]
     },
@@ -175,9 +107,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 0,
-          "endPos": 8,
-          "entity": "Device"
+          "endPos": 8
         }
       ]
     },
@@ -186,9 +118,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 0,
-          "endPos": 9,
-          "entity": "Device"
+          "endPos": 9
         }
       ]
     },
@@ -197,14 +129,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 0,
-          "endPos": 10,
-          "entity": "Room"
+          "endPos": 10
         },
         {
+          "entity": "Device",
           "startPos": 12,
-          "endPos": 15,
-          "entity": "Device"
+          "endPos": 15
         }
       ]
     },
@@ -213,14 +145,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 0,
-          "endPos": 10,
-          "entity": "Room"
+          "endPos": 10
         },
         {
+          "entity": "Device",
           "startPos": 12,
-          "endPos": 16,
-          "entity": "Device"
+          "endPos": 16
         }
       ]
     },
@@ -229,20 +161,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 9,
-          "endPos": 13,
-          "entity": "Device"
-        }
-      ]
-    },
-    {
-      "text": "lower your volume",
-      "intent": "None",
-      "entities": [
-        {
-          "startPos": 11,
-          "endPos": 16,
-          "entity": "deviceProperty"
+          "endPos": 13
         }
       ]
     },
@@ -251,9 +172,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 5,
-          "endPos": 12,
-          "entity": "Device"
+          "endPos": 12
         }
       ]
     },
@@ -262,9 +183,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 10,
-          "endPos": 15,
-          "entity": "Device"
+          "endPos": 15
         }
       ]
     },
@@ -273,9 +194,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 5,
-          "endPos": 7,
-          "entity": "Device"
+          "endPos": 7
         }
       ]
     },
@@ -284,14 +205,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 4,
-          "endPos": 9,
-          "entity": "Device"
+          "endPos": 9
         },
         {
+          "entity": "Room",
           "startPos": 18,
-          "endPos": 24,
-          "entity": "Room"
+          "endPos": 24
         }
       ]
     },
@@ -300,14 +221,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 4,
-          "endPos": 9,
-          "entity": "Device"
+          "endPos": 9
         },
         {
+          "entity": "deviceProperty",
           "startPos": 14,
-          "endPos": 19,
-          "entity": "deviceProperty"
+          "endPos": 19
         }
       ]
     },
@@ -316,14 +237,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 4,
-          "endPos": 9,
-          "entity": "Device"
+          "endPos": 9
         },
         {
+          "entity": "deviceProperty",
           "startPos": 14,
-          "endPos": 24,
-          "entity": "deviceProperty"
+          "endPos": 24
         }
       ]
     },
@@ -332,9 +253,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 18,
-          "endPos": 25,
-          "entity": "Device"
+          "endPos": 25
         }
       ]
     },
@@ -343,9 +264,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 12,
-          "endPos": 14,
-          "entity": "Device"
+          "endPos": 14
         }
       ]
     },
@@ -354,14 +275,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 6,
-          "endPos": 19,
-          "entity": "Room"
+          "endPos": 19
         },
         {
+          "entity": "Device",
           "startPos": 21,
-          "endPos": 25,
-          "entity": "Device"
+          "endPos": 25
         }
       ]
     },
@@ -370,9 +291,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 0,
-          "endPos": 6,
-          "entity": "Room"
+          "endPos": 6
         }
       ]
     },
@@ -381,9 +302,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 5,
-          "endPos": 10,
-          "entity": "Device"
+          "endPos": 10
         }
       ]
     },
@@ -392,9 +313,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 9,
-          "endPos": 10,
-          "entity": "Device"
+          "endPos": 10
         }
       ]
     },
@@ -403,14 +324,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 9,
-          "endPos": 13,
-          "entity": "Room"
+          "endPos": 13
         },
         {
+          "entity": "Device",
           "startPos": 15,
-          "endPos": 20,
-          "entity": "Device"
+          "endPos": 20
         }
       ]
     },
@@ -419,14 +340,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 9,
-          "endPos": 19,
-          "entity": "Room"
+          "endPos": 19
         },
         {
+          "entity": "Device",
           "startPos": 21,
-          "endPos": 25,
-          "entity": "Device"
+          "endPos": 25
         }
       ]
     },
@@ -435,9 +356,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 9,
-          "endPos": 17,
-          "entity": "Device"
+          "endPos": 17
         }
       ]
     },
@@ -446,9 +367,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 16,
-          "endPos": 19,
-          "entity": "Device"
+          "endPos": 19
         }
       ]
     },
@@ -457,14 +378,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 8,
-          "endPos": 15,
-          "entity": "Room"
+          "endPos": 15
         },
         {
+          "entity": "Device",
           "startPos": 17,
-          "endPos": 22,
-          "entity": "Device"
+          "endPos": 22
         }
       ]
     },
@@ -473,9 +394,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 8,
-          "endPos": 23,
-          "entity": "Device"
+          "endPos": 23
         }
       ]
     },
@@ -484,14 +405,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 8,
-          "endPos": 14,
-          "entity": "Room"
+          "endPos": 14
         },
         {
+          "entity": "Device",
           "startPos": 16,
-          "endPos": 21,
-          "entity": "Device"
+          "endPos": 21
         }
       ]
     },
@@ -500,14 +421,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 8,
-          "endPos": 12,
-          "entity": "Device"
+          "endPos": 12
         },
         {
+          "entity": "Room",
           "startPos": 17,
-          "endPos": 23,
-          "entity": "Room"
+          "endPos": 23
         }
       ]
     },
@@ -516,14 +437,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 11,
-          "endPos": 17,
-          "entity": "Room"
+          "endPos": 17
         },
         {
+          "entity": "Device",
           "startPos": 19,
-          "endPos": 24,
-          "entity": "Device"
+          "endPos": 24
         }
       ]
     },
@@ -532,25 +453,14 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Room",
           "startPos": 12,
-          "endPos": 23,
-          "entity": "Room"
+          "endPos": 23
         },
         {
+          "entity": "Device",
           "startPos": 25,
-          "endPos": 30,
-          "entity": "Device"
-        }
-      ]
-    },
-    {
-      "text": "turn on the internet in my bedroom please",
-      "intent": "None",
-      "entities": [
-        {
-          "startPos": 27,
-          "endPos": 33,
-          "entity": "Room"
+          "endPos": 30
         }
       ]
     },
@@ -559,9 +469,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 8,
-          "endPos": 17,
-          "entity": "Device"
+          "endPos": 17
         }
       ]
     },
@@ -570,9 +480,9 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 9,
-          "endPos": 11,
-          "entity": "Device"
+          "endPos": 11
         }
       ]
     },
@@ -581,11 +491,113 @@
       "intent": "HomeAutomation",
       "entities": [
         {
+          "entity": "Device",
           "startPos": 5,
-          "endPos": 14,
-          "entity": "Device"
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "decrease temperature for me please",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "deviceProperty",
+          "startPos": 9,
+          "endPos": 19
+        }
+      ]
+    },
+    {
+      "text": "dim kitchen lights to 25 .",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 4,
+          "endPos": 10
+        },
+        {
+          "entity": "Device",
+          "startPos": 12,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "lower your volume",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "deviceProperty",
+          "startPos": 11,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "turn on the internet in my bedroom please",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 27,
+          "endPos": 33
         }
       ]
     }
-  ]
+  ],
+  "patterns": [
+    {
+      "pattern": "{Device_PatternAny} in {Room_PatternAny} on [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "turn on {Device_PatternAny}",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "turn on {Device_PatternAny} in {Room_PatternAny}",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device_PatternAny} in {Room_PatternAny} off [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device_PatternAny} on [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "{Device_PatternAny} off [please]",
+      "intent": "HomeAutomation"
+    },
+    {
+      "pattern": "turn off {Device_PatternAny} in {Room_PatternAny}",
+      "intent": "HomeAutomation"
+    }
+  ],
+  "patternAnyEntities": [
+    {
+      "name": "Device_PatternAny",
+      "explicitList": [],
+      "roles": []
+    },
+    {
+      "name": "Room_PatternAny",
+      "explicitList": [],
+      "roles": []
+    }
+  ],
+  "prebuiltEntities": [
+    {
+      "name": "number",
+      "roles": []
+    }
+  ],
+  "luis_schema_version": "3.0.0",
+  "versionId": "0.1",
+  "name": "homeAutomation.luis",
+  "desc": "",
+  "culture": "en-us"
 }

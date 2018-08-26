@@ -10,26 +10,16 @@ const NONE_INTENT = 'None';
 const LOCATION_ENTITY = 'Location';
 const LOCATION_PATTERNANY_ENTITY = 'Location_PatternAny';
 
-// STATE
-const WeatherState = require('./weather-state');
-
 // this is the LUIS service type entry in the .bot file.
 const WEATHER_LUIS_CONFIGURATION = 'weather-LUIS';
 
 class Weather {
     /**
      * 
-     * @param {Object} convoState conversation state
-     * @param {Object} userState user state
      * @param {Object} botConfig bot configuration from .bot file
      */
-    constructor(convoState, userState, botConfig) {
-        if(!convoState) throw ('Need converstaion state');
-        if(!userState) throw ('Need user state');
+    constructor(botConfig) {
         if(!botConfig) throw ('Need bot config');
-
-        // home automation state
-        this.state = new WeatherState(convoState, userState);
         
         // add recogizers
         const luisConfig = botConfig.findServiceByNameOrId(WEATHER_LUIS_CONFIGURATION);
@@ -62,7 +52,7 @@ class Weather {
             case NONE_INTENT:
             default:
                 await context.sendActivity(`Weather dialog cannot fulfill this request. Bubbling up`);
-                // this dialog cannot handle this specific utterance. bubble up to parent
+                // TODO: this dialog cannot handle this specific utterance. bubble up to parent
         }
     }
 };

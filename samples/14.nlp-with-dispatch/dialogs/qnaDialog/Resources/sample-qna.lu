@@ -14,5 +14,5 @@
 - What is your name?
 - What should I call you?
     ```markdown
-    I am the LUIS-QnAMaker Dispatch bot! I show how easy it is to use multiple LUIS models and a QnAMaker model inside of a chatbot.
+    I am the LUIS-QnAMaker Dispatch bot! This sample demonstrates using several LUIS applications and QnA Maker knowledge base using dispatch.
     ```
