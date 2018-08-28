@@ -1,4 +1,6 @@
-This sample shows how to create a simple Echo bot with state. The bot keeps simple counter step that increased with each user message. This bot example uses [`restify`](https://www.npmjs.com/package/restify). 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+
+This sample shows how to create a simple Echo bot with state. The bot keeps simple counter step that increased with each user message. This bot example uses [`restify`](https://www.npmjs.com/package/restify).
 
 # To try this sample
 - Clone the repository
