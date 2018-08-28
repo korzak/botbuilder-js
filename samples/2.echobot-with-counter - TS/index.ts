@@ -1,21 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
- 
-const path = require('path');
-const restify = require('restify');
 
-// Import reuqired bot services. See https://ama.ms/bot-services to learn more about the different part of a bot
-const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbuilder');
+import * as restify from 'restify';
+import * as path from 'path';
+import { config } from 'dotenv';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
+import { BotConfiguration, IEndpointService } from 'botframework-config';
+import { MainDialog } from './dialogs/mainDialog';
 
-// the bot's main (and only in this example) dialog
-const MainDialog = require('./dialogs/mainDialog');
-
-// Import required bot confuguration.
-const { BotConfiguration } = require('botframework-config');
+// bot name as defined in .bot file 
+// See https://aka.ms/about-bot-file to learn more about .bot file its use and bot configuration .
+const BOT_CONFIGURATION = 'echobot-with-counter';
 
 // read botFilePath and botFileSecret from .env file
-const ENV_FILE = path.join(__dirname, '.env');
-const env = require('dotenv').config({path: ENV_FILE});
+const ENV_FILE = path.join(__dirname, '..', '.env');
+const loadFromEnv = config({path: ENV_FILE});
 
 // Create HTTP server
 let server = restify.createServer();
@@ -27,17 +26,11 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // .bot file path
-const BOT_FILE = path.join(__dirname, process.env.botFilePath);
-
+const BOT_FILE = path.join(__dirname, '..', process.env.botFilePath);
 // read bot configuration from .bot file.
 const botConfig = BotConfiguration.loadSync(BOT_FILE, process.env.botFileSecret);
-
-// bot name as defined in .bot file 
-// See https://aka.ms/about-bot-file to learn more about .bot file its use and bot configuration .
-const BOT_CONFIGURATION = 'echobot-with-counter';
-
 // Get bot endpoint configuration by service name
-const endpointConfig = botConfig.findServiceByNameOrId(BOT_CONFIGURATION);
+const endpointConfig = <IEndpointService>botConfig.findServiceByNameOrId(BOT_CONFIGURATION);
 
 // Create adapter. See https://aka.ms/about-bot-adapter to learn more about .bot file its use and bot configuration .
 const adapter = new BotFrameworkAdapter({
