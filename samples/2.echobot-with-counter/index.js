@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
  
-//  node.js application entry point
-
 const path = require('path');
 const env = require('dotenv').config({path: path.join(__dirname,'.env')});
 const restify = require('restify');
@@ -13,6 +11,12 @@ const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbu
 // the bot's main (and only in this example) dialog
 const MainDialog = require('./dialogs/mainDialog');
 
+// Import required bot confuguration.
+const { BotConfiguration } = require('botframework-config');
+// bot name as defined in .bot file 
+// See https://aka.ms/about-bot-file to learn more about .bot file its use and bot configuration .
+const BOT_CONFIGURATION = 'echobot-with-counter';
+
 // Create HTTP server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -22,11 +26,6 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`\nTo talk to your bot, open the EchoBot-With-Counter.bot file in the Emulator`);
 });
 
- // Import required bot confuguration.
-const { BotConfiguration } = require('botframework-config');
-// bot name as defined in .bot file 
-// See https://aka.ms/about-bot-file to learn more about .bot file its use and bot configuration .
-const BOT_CONFIGURATION = 'echobot-with-counter';
 // read bot configuration from .bot file.
 const botConfig = BotConfiguration.loadSync(path.join(__dirname, process.env.botFilePath), process.env.botFileSecret);
 // Get bot endpoint configuration by service name
@@ -63,7 +62,6 @@ const mainDlg = new MainDialog(convoState);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
-    // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {
         // route to main dialog.
         await mainDlg.onTurn(context);        
